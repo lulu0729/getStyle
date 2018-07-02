@@ -1,0 +1,24 @@
+{
+  "name" : "getStyle",
+  "identifier" : "co.getstyle",
+  "version" : "1.0",
+  "description" : "A plugin to get style.",
+  "author" : "yiyinglu",
+  "commands" : [
+    {
+      "script" : "main.cocoascript",
+      "handlers": {
+        "run": "onRun",
+        "actions": {
+          "SelectionChanged.finish": "onSelectionChanged",
+        }
+      },
+      "name" : "getStyle",
+      "identifier" : "co.getstyle.command"
+    }
+  ],
+  "menu": {
+    "isRoot": true,
+    "items": ["co.getstyle.command"]
+  }
+}

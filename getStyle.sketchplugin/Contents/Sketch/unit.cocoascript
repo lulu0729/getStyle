@@ -1,0 +1,56 @@
+
+
+var	getRect = function(layer){
+     var rect = layer.absoluteRect();
+        return {
+            x: Math.round(rect.x()),
+            y: Math.round(rect.y()),
+            width: Math.round(rect.width()),
+            height: Math.round(rect.height()),
+            maxX: Math.round(rect.x() + rect.width()),
+            maxY: Math.round(rect.y() + rect.height()),
+            setX: function(x){ rect.setX(x); this.x = x; this.maxX = this.x + this.width; },
+            setY: function(y){ rect.setY(y); this.y = y; this.maxY = this.y + this.height; },
+            setWidth: function(width){ rect.setWidth(width); this.width = width; this.maxX = this.x + this.width; },
+            setHeight: function(height){ rect.setHeight(height); this.height = height; this.maxY = this.y + this.height; }
+        };
+    };
+var convertUnit = function(rect){
+        log("width:"+rect.width * 100/750+ "vw;");
+        log("height:"+rect.height * 100/750+ "vw;");
+        var textCSS ="width:" + (rect.width * 100/750).toFixed(4) + "vw;<br>" + "height:" + (rect.height * 100/750).toFixed(4)+ "vw;"
+        return textCSS;
+    };
+var getPosition = function(rect1,rect2){
+    var left = Math.round(rect1.x - rect2.x),
+        top = Math.round(rect1.y - rect2.y),
+        right = Math.round(rect1.maxX - rect2.maxX),
+        bottom = Math.round(rect1.maxY - rect2.maxY);
+    var textCSS = "left:" + (left * 100/750).toFixed(4) + "vw;<br>" + "top:" + (top * 100/750).toFixed(4)+ "vw;<br>" + "right:" + (right * 100/750).toFixed(4)+ "vw;<br>"+ "bottom:" + (bottom * 100/750).toFixed(4)+ "vw;"
+    log(textCSS);
+    return textCSS;
+}
+var getSpacings = function(selection){
+        var style;
+            log("selection.count:"+selection.count());
+        if( !(selection.count() > 0 && selection.count() < 3) ){
+            log("Select 1 or 2 layers to get style!");
+            style = "Select 1 or 2 layers to get style!"
+            return style;
+        }else if(selection.count() == 1){
+            log("Select 1!");
+            var targetRect = this.getRect(selection[0]);
+            style = this.convertUnit(targetRect);
+            log(style);
+            return style;
+        }else if(selection.count() == 2){
+
+            var target = (selection.count() == 1)? selection[0]: selection[1],
+                layer = (selection.count() == 1)? this.current: selection[0];
+            var targetRect = this.getRect(target),
+                layerRect = this.getRect(layer);
+            style = this.getPosition(targetRect,layerRect);
+            log(style);
+            return style;
+        }
+    }

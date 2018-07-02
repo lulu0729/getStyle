@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>spacing master</title>
+<style type="text/css">
+.container{
+  padding: 10px;
+}
+.value{
+  width: 100%;
+  height: 100%;
+  background-color: #272822;
+  color: #fff;
+}
+.text{
+  padding: 10px;
+  font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="value">
+        <p class="text" id="textCSS">CSS</p>
+    </div>
+    <button class="btn" id="copyCSS" style="display:none;">copy CSS</button>
+</div>
+
+<script>
+
+
+var copyCSS = document.getElementById("copyCSS"),
+    textCSS = document.getElementById("textCSS");
+// Disable the context menu
+
+/*[].forEach.call(document.querySelectorAll(".icon"), function(icon) {
+  icon.addEventListener("click", function(e) {
+
+    // Create JSON object with the action we want to trigger and the current UNIX date
+    var data = {
+      "action": icon.getAttribute("data-action"),
+      "date": new Date().getTime()
+    }
+
+    // Put the JSON as a string in the hash
+    window.location.hash = JSON.stringify(data);
+  });
+});*/
+
+/*function updatePreview(style) {
+
+  // Set the attributes as the CSS style of our <div>
+  document.querySelector(".preview__item").style.cssText = style;
+}
+*/
+
+/*copyCSS.onclick = function() {
+    window.location.hash = textCSS.value+ "-copyCSS-" + new Date().getTime();
+    return false;
+}
+*/
+// Disable right-click menu
+
+
+// Call from Sketch
+
+
+function updatePreview(style) {
+
+  document.querySelector("#textCSS").innerHTML = style;
+}
+//updatePreview('hhh');
+
+</script>
+
+</body>
+</html>

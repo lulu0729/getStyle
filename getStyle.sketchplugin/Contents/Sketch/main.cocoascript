@@ -2,6 +2,7 @@
 @import "unit.cocoascript";
 
 function onRun(context) {
+  //设置窗口宽高
   var panelWidth = 280;
   var panelHeight = 240;
 
@@ -9,82 +10,71 @@ function onRun(context) {
   var threadDictionary = NSThread.mainThread().threadDictionary();
   var identifier = "co.getstyle";
 
-  // If there's already a panel, prevent the plugin from running
+  // 如果已存在该panel了，则返回、不再创建新panel
   if (threadDictionary[identifier]) return;
 
-  // Create the panel and set its appearance
+  // 新建一个panel
   var panel = NSPanel.alloc().init();
+  //根据给定的矩形框设置窗口框架矩形的原点和大小，从而在屏幕上设置其位置和大小
   panel.setFrame_display(NSMakeRect(0, 0, panelWidth, panelHeight), true);
+  
   panel.setStyleMask(NSTexturedBackgroundWindowMask | NSTitledWindowMask | NSClosableWindowMask | NSFullSizeContentViewWindowMask);
+  //设置panel背景色
   panel.setBackgroundColor(NSColor.whiteColor());
 
-  // Set the panel's title and title bar appearance
+  // 设置title bar
   panel.title = "";
   panel.titlebarAppearsTransparent = true;
 
-  // Center and focus the panel
+  // 使panel居中并focus panel
   panel.center();
   panel.makeKeyAndOrderFront(null);
   panel.setLevel(NSFloatingWindowLevel);
 
-  // Make the plugin's code stick around (since it's a floating panel)
   COScript.currentCOScript().setShouldKeepAround_(true);
 
-  // Hide the Minimize and Zoom button
+  // 隐藏panel的最小化及最大化按钮
   panel.standardWindowButton(NSWindowMiniaturizeButton).setHidden(true);
   panel.standardWindowButton(NSWindowZoomButton).setHidden(true);
 
-  // Create the blurred background
+  // 设置一个模糊背景阴影
   var vibrancy = NSVisualEffectView.alloc().initWithFrame(NSMakeRect(0, 0, panelWidth, panelHeight));
   vibrancy.setAppearance(NSAppearance.appearanceNamed(NSAppearanceNameVibrantLight));
   vibrancy.setBlendingMode(NSVisualEffectBlendingModeBehindWindow);
 
-  // Create the WebView with a request to a Web page in Contents/Resources/
+  // 在panel中新建一个webView
   var webView = WebView.alloc().initWithFrame(NSMakeRect(0, 0, panelWidth, panelHeight - 44));
+  // 获取webView的url
   var request = NSURLRequest.requestWithURL(context.plugin.urlForResourceNamed("panel.html"));
-  webView.mainFrame().loadRequest(request);
+  webView.mainFrame().loadRequest(request);//加载webView
   webView.setDrawsBackground(false);
 
-  // Access the Web page's JavaScript environment
+  // 获取webView里的window对象
   var windowObject = webView.windowScriptObject();
 
-  // Create the delegate
+  // 创建delegate
   var delegate = new MochaJSDelegate({
 
-    // Listen to the page loading state
+    // 监听webView是否加载完毕
     "webView:didFinishLoadForFrame:": (function(webView, webFrame) {
 
         var selection = context.selection;
         log(selection);
         var textCSS = getSpacings(selection);
         log("textCSS:" + textCSS);
-        // Send the CSS attributes as a string to the Web page
+        // 调用webView中的函数，更新页面的数据展示
         windowObject.evaluateWebScript("updatePreview('" + textCSS + "')");
-    }),
-
-    // Listen to URL changes
-    "webView:didChangeLocationWithinPageForFrame:": (function(webView, webFrame) {
-
-      // Extract the URL hash (without #) by executing JavaScript in the Web page
-      var hash = windowObject.evaluateWebScript("window.location.hash.substring(1)");
-
-      // Parse the hash's JSON content
-      var data = JSON.parse(hash);
-
-      // Launch a Sketch action and focus the main window
-      context.document.actionsController().actionForID(data.action).doPerformAction(null);
-      NSApp.mainWindow().makeKeyAndOrderFront(null);
     })
   })
 
   // Set the delegate on the WebView
   webView.setFrameLoadDelegate_(delegate.getClassInstance());
 
-  // Add the content views to the panel
+  // 把这个webView加到窗口中
   panel.contentView().addSubview(vibrancy);
   panel.contentView().addSubview(webView);
 
-  // After creating the panel, store a reference to it
+  // 将这个panel存储起来
   threadDictionary[identifier] = panel;
 
   var closeButton = panel.standardWindowButton(NSWindowCloseButton);
@@ -104,18 +94,16 @@ function onRun(context) {
 var onSelectionChanged = function(context) {
   var threadDictionary = NSThread.mainThread().threadDictionary();
   var identifier = "co.getstyle";
-  //log(threadDictionary);
-  log("spacing" + 'threadDictionary1');
-  // Check if there's a panel opened or not
+  
+  //看是否存在了panel
   if (threadDictionary[identifier]) {
-    log("spacing" + 'threadDictionary2');
     var panel = threadDictionary[identifier];
 
-    // Access the panel from the reference and the WebView
+    // 获取已有的panel的webView
     var webView = panel.contentView().subviews()[1];
     var windowObject = webView.windowScriptObject();
 
-    // Get the current selection and update the CSS preview accordingly
+    // 获取选择的图层，并处理
     var selection = context.actionContext.document.selectedLayers().layers();    
     var textCSS = getSpacings(selection);
     log("spacing" + selection);

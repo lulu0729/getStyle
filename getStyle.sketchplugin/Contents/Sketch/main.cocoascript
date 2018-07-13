@@ -1,5 +1,6 @@
 @import "MochaJSDelegate.js";
 @import "unit.cocoascript";
+var sketch = require('sketch');
 
 function onRun(context) {
   //设置窗口宽高
@@ -60,7 +61,7 @@ function onRun(context) {
 
         var selection = context.selection;
         log(selection);
-        var textCSS = getSpacings(selection);
+        var textCSS = getStyle(selection);
         log("textCSS:" + textCSS);
         // 调用webView中的函数，更新页面的数据展示
         windowObject.evaluateWebScript("updatePreview('" + textCSS + "')");
@@ -105,7 +106,7 @@ var onSelectionChanged = function(context) {
 
     // 获取选择的图层，并处理
     var selection = context.actionContext.document.selectedLayers().layers();    
-    var textCSS = getSpacings(selection);
+    var textCSS = getStyle(selection);
     log("spacing" + selection);
     log("textCSS:" + textCSS);
     windowObject.evaluateWebScript("updatePreview('" + textCSS + "')");

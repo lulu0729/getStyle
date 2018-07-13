@@ -32,17 +32,16 @@ var convertPosition = function(rect1,rect2){
 }
 var getTextStyle = function(text){
     var textCSS = '';
-        //console.log("type:" + text.toJSON());
         var fontSize = text.fontSize(),
             lineHeight = text.lineHeight();
         
         if(fontSize){
             textCSS += "font-size:" + Math.round(fontSize/2) + "px;<br>";
-            log(textCSS);
+            //log(textCSS);
         }
         if(lineHeight){
             textCSS += "line-height:" + Math.round(lineHeight/2) + "px;<br>";
-            log(textCSS);
+            //log(textCSS);
         }
     
     return textCSS
@@ -59,6 +58,7 @@ var getStyle = function(selection){
             var targetRect = this.getRect(selection[0]);
             style = this.convertUnit(targetRect) + this.getTextStyle(selection[0]);
             log("style:" + style);
+            log(selection[0].CSSAttributes());
             return style;
         }else if(selection.count() == 2){
 
@@ -68,6 +68,7 @@ var getStyle = function(selection){
                 layerRect = this.getRect(layer);
             style = this.convertPosition(targetRect,layerRect);
             log(style);
+            
             return style;
         }
     }

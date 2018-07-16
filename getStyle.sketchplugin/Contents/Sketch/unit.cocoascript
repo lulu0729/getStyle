@@ -16,8 +16,8 @@ var	getRect = function(layer){
         };
     };
 var convertUnit = function(rect){
-        log("width:"+rect.width * 100/750+ "vw;");
-        log("height:"+rect.height * 100/750+ "vw;");
+        //log("width:"+rect.width * 100/750+ "vw;");
+        //log("height:"+rect.height * 100/750+ "vw;");
         var textCSS ="width:" + (rect.width * 100/750).toFixed(4) + "vw;<br>" + "height:" + (rect.height * 100/750).toFixed(4)+ "vw;<br>"
         return textCSS;
     };
@@ -27,13 +27,15 @@ var convertPosition = function(rect1,rect2){
         right = Math.round(rect1.maxX - rect2.maxX),
         bottom = Math.round(rect1.maxY - rect2.maxY);
     var textCSS = "left:" + (left * 100/750).toFixed(4) + "vw;<br>" + "top:" + (top * 100/750).toFixed(4)+ "vw;<br>" + "right:" + (right * 100/750).toFixed(4)+ "vw;<br>"+ "bottom:" + (bottom * 100/750).toFixed(4)+ "vw;<br>"
-    log(textCSS);
+    //log(textCSS);
     return textCSS;
 }
 var getTextStyle = function(text){
     var textCSS = '';
-        var fontSize = text.fontSize(),
-            lineHeight = text.lineHeight();
+    var attributes = text.attributedString().treeAsDictionary().value.attributes;
+    var fontSize = text.fontSize(),//获取font-size
+        lineHeight = text.lineHeight();//获取line-height
+    var color;
         
         if(fontSize){
             textCSS += "font-size:" + Math.round(fontSize/2) + "px;<br>";
@@ -43,12 +45,15 @@ var getTextStyle = function(text){
             textCSS += "line-height:" + Math.round(lineHeight/2) + "px;<br>";
             //log(textCSS);
         }
-    
+    attributes.forEach(function(attr) {
+        color = attr.MSAttributedStringColorAttribute.value + ";<br>";
+    });
+    textCSS += "color:" + color;
     return textCSS
 }
 var getStyle = function(selection){
         var style;
-            log("selection.count:"+selection.count());
+            //log("selection.count:"+selection.count());
         if( !(selection.count() > 0 && selection.count() < 3) ){
             log("Select 1 or 2 layers to get style!");
             style = "Select 1 or 2 layers to get style!"
@@ -56,9 +61,15 @@ var getStyle = function(selection){
         }else if(selection.count() == 1){
             log("Select 1!");
             var targetRect = this.getRect(selection[0]);
-            style = this.convertUnit(targetRect) + this.getTextStyle(selection[0]);
-            log("style:" + style);
-            log(selection[0].CSSAttributes());
+            //转换宽高单位
+            style = this.convertUnit(targetRect) /*+ this.getTextStyle(selection[0])*/;
+             var attributes = selection[0].attributedString().treeAsDictionary().value.attributes;
+
+            attributes.forEach(function(attr) {
+            log(attr);
+            })
+                    
+                    //log(selection[0].CSSAttributes());
             return style;
         }else if(selection.count() == 2){
 

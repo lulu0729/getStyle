@@ -51,6 +51,85 @@ var getTextStyle = function(text){
     textCSS += "color:" + color;
     return textCSS
 }
+function rgbaCode(colour) {
+  var red = Math.round(colour.red() * 255);
+  var green = Math.round(colour.green() * 255);
+  var blue = Math.round(colour.blue() * 255);
+
+  return '"rgba(' + red + ',' + green + ',' + blue + ',' + colour.alpha() + ')"';
+}
+function topFill(style) {
+  var fills = style.enabledFills();
+
+  var i, len, fill = null;
+  for (i = 0, len = fills.length; i < len; i++) {
+    var fillType = fills[i].fillType();
+    if (fillType == 0) {
+      fill = fills[i];
+    }
+  }
+
+  return fill;
+}
+
+function topBorder(style) {
+  var borders = style.enabledBorders();
+
+  var i, len, border = null;
+  for (i = 0, len = borders.length; i < len; i++) {
+    var fillType = borders[i].fillType();
+    if (fillType == 0) {
+      border = borders[i];
+    }
+  }
+
+  return border;
+}
+
+function topShadow(style) {
+  var shadows = style.enabledShadows();
+  var len = shadows.length;
+
+  if (len == 0) {
+    return null;
+  } else {
+    return shadows[len - 1];
+  }
+}
+function getLayerStyle(layer) {
+
+  var textCSS = '';
+
+  var fill = topFill(layer.style());
+  if (fill) {
+    textCSS += "background-color:" + rgbaCode(fill.color()) + ";<br>";
+  }
+
+  var borderRadius;
+  /*if (isCircle(layer)) {
+    textCSS += "border-radius:" + framerObject.width / 2 + "px;<br>";
+  } else {
+    textCSS += "border-radius:" + layer.layers().firstObject().cornerRadiusFloat() + "px;<br>";
+  }*/
+
+  var border = topBorder(layer.style());
+  if (border) {
+    textCSS += "border-color:" + rgbaCode(border.color()) + ";<br>";
+    textCSS += "border-width:" + border.thickness()/2 + "px;<br>";
+  }
+
+  var shadow = topShadow(layer.style());
+  if (shadow) {
+    textCSS += "box-shadow:" + shadow.color() + " " + shadow.offsetX()/2 + "px " + shadow.offsetY()/2 + "px " + shadow.blurRadius()/2 + "px;<br>";
+  }
+
+  var opacity = layer.style().contextSettings().opacity();
+  if (opacity != 1) {
+    textCSS += "opacity:" + opacity + ";<br>";
+  }
+
+  return textCSS;
+}
 var getStyle = function(selection){
         var style;
             //log("selection.count:"+selection.count());
@@ -63,12 +142,7 @@ var getStyle = function(selection){
             var targetRect = this.getRect(selection[0]);
             //转换宽高单位
             style = this.convertUnit(targetRect) /*+ this.getTextStyle(selection[0])*/;
-             var attributes = selection[0].attributedString().treeAsDictionary().value.attributes;
-
-            attributes.forEach(function(attr) {
-            log(attr);
-            })
-                    
+            log(this.getLayerStyle(selection[0]));
                     //log(selection[0].CSSAttributes());
             return style;
         }else if(selection.count() == 2){

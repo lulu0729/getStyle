@@ -108,6 +108,7 @@ var onSelectionChanged = function(context) {
     var textCSS = getSpacings(selection);
     log("spacing" + selection);
     log("textCSS:" + textCSS);
+    // 执行webView中的函数updatePreview
     windowObject.evaluateWebScript("updatePreview('" + textCSS + "')");
     
   }

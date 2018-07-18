@@ -4,8 +4,8 @@ var sketch = require('sketch');
 
 function onRun(context) {
   //设置窗口宽高
-  var panelWidth = 280;
-  var panelHeight = 240;
+  var panelWidth = 800;
+  var panelHeight = 500;
 
   // Create an NSThread dictionary with a specific identifier
   var threadDictionary = NSThread.mainThread().threadDictionary();
@@ -59,10 +59,10 @@ function onRun(context) {
     // 监听webView是否加载完毕
     "webView:didFinishLoadForFrame:": (function(webView, webFrame) {
 
-        var selection = context.selection;
-        log(selection);
+        var selection = context.document.selectedLayers().layers();
+        //log(selection);
         var textCSS = getStyle(selection);
-        log("textCSS:" + textCSS);
+        //log("textCSS:" + textCSS);
         // 调用webView中的函数，更新页面的数据展示
         windowObject.evaluateWebScript("updatePreview('" + textCSS + "')");
     })
@@ -107,8 +107,8 @@ var onSelectionChanged = function(context) {
     // 获取选择的图层，并处理
     var selection = context.actionContext.document.selectedLayers().layers();    
     var textCSS = getStyle(selection);
-    log("spacing" + selection);
-    log("textCSS:" + textCSS);
+    //log("spacing" + selection);
+    //log("textCSS:" + textCSS);
     windowObject.evaluateWebScript("updatePreview('" + textCSS + "')");
     
   }

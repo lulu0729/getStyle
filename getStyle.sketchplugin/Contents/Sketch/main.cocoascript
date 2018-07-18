@@ -106,16 +106,8 @@ var onSelectionChanged = function(context) {
 
     // 获取选择的图层，并处理
     var selection = context.actionContext.document.selectedLayers().layers();    
-<<<<<<< HEAD
-    var textCSS = getSpacings(selection);
-    log("spacing" + selection);
-    log("textCSS:" + textCSS);
-    // 执行webView中的函数updatePreview
-=======
+
     var textCSS = getStyle(selection);
-    //log("spacing" + selection);
-    //log("textCSS:" + textCSS);
->>>>>>> getTextStyle
     windowObject.evaluateWebScript("updatePreview('" + textCSS + "')");
     
   }

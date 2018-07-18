@@ -77,18 +77,18 @@ function getLayerStyle(layer) {
     textCSS += "border-radius:" + framerObject.width / 2 + "px;<br>";
   } else {*/
   if(borderRadius){
-    textCSS += "border-radius:" + borderRadius/2 + "px;<br>";
+    textCSS += "border-radius:" + Math.ceil(borderRadius/2) + "px;<br>";
   }
 
   var border = topBorder(layer.style());
   if (border) {
-    textCSS += "border:" + border.thickness()/2 + "px " + " solid " + rgbaCode(border.color()) + ";<br>";
+    textCSS += "border:" + Math.ceil(border.thickness()/2) + "px " + " solid " + rgbaCode(border.color()) + ";<br>";
     
   }
 
   var shadow = topShadow(layer.style());
   if (shadow) {
-    textCSS += "box-shadow:" + rgbaCode(shadow.color())  + ' ' + shadow.offsetX()/2 + "px " + shadow.offsetY()/2 + "px " + shadow.blurRadius()/2 + "px;<br>";
+    textCSS += "box-shadow:" + rgbaCode(shadow.color())  + ' ' + Math.ceil(shadow.offsetX()/2) + "px " + Math.ceil(shadow.offsetY()/2) + "px " + Math.ceil(shadow.blurRadius()/2) + "px;<br>";
   }
 
   var opacity = layer.style().contextSettings().opacity();

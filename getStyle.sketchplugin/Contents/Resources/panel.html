@@ -5,16 +5,25 @@
 <title>spacing master</title>
 <style type="text/css">
 .container{
-  padding: 10px;
+  height: 100%;
+  padding: 0 40px;
+  line-height: 1.5;
 }
 .value{
   width: 100%;
   height: 100%;
-  background-color: #272822;
-  color: #fff;
+  background-color: #F3EFED;
+  color: #000;
+  overflow: scroll;
+}
+.tit{
+  font-size: 20px;
+  line-height: 1.5;
+  font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  padding: 0 15px;
 }
 .text{
-  padding: 10px;
+  padding: 0 15px 10px;
   font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
 }
 </style>
@@ -22,6 +31,7 @@
 <body>
 <div class="container">
     <div class="value">
+        <h1 class="tit">选择1~2个图层</h1>
         <p class="text" id="textCSS">CSS</p>
     </div>
     <button class="btn" id="copyCSS" style="display:none;">copy CSS</button>

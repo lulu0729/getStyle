@@ -1982,16 +1982,44 @@ var convertUnit = function convertUnit(rect, settings) {
       heightUnit = settings.height;
   var style = "";
 
-  if (widthUnit == "px") {
-    style += "width:" + rect.width / 2 + "px;<br>";
-  } else if (widthUnit == "vw") {
+  if (widthUnit == "px") {} else if (widthUnit == "vw") {
     style += "width:" + (rect.width * 100 / 750).toFixed(6) + "vw;<br>";
   }
 
-  if (heightUnit == "px") {
-    style += "height:" + rect.height / 2 + "px;<br>";
-  } else if (heightUnit == "vw") {
-    style += "height:" + (rect.height * 100 / 750).toFixed(6) + "vw;<br>";
+  switch (widthUnit) {
+    case "px@0.5x":
+      style += "width:" + rect.width / 2 + "px;<br>";
+      break;
+
+    case "px":
+      style += "width:" + rect.width + "px;<br>";
+      break;
+
+    case "vw":
+      style += "width:" + (rect.width * 100 / 750).toFixed(6) + "vw;<br>";
+      break;
+
+    default:
+      log("无法识别这个单位");
+      break;
+  }
+
+  switch (heightUnit) {
+    case "px@0.5x":
+      style += "height:" + rect.width / 2 + "px;<br>";
+      break;
+
+    case "px":
+      style += "height:" + rect.width + "px;<br>";
+      break;
+
+    case "vw":
+      style += "height:" + (rect.width * 100 / 750).toFixed(6) + "vw;<br>";
+      break;
+
+    default:
+      log("无法识别这个单位");
+      break;
   }
 
   log('react style:' + style);
@@ -2026,20 +2054,44 @@ var getTextStyle = function getTextStyle(text, settings) {
   if (fontSize) {
     log('fontSizeUnit:' + fontSizeUnit);
 
-    if (fontSizeUnit == "px") {
-      textCSS += "font-size:" + Math.round(fontSize / 2) + "px;<br>";
-    } else if (fontSizeUnit == "vw") {
-      textCSS += "font-size:" + (fontSize * 100 / 750).toFixed(6) + "vw;<br>";
+    switch (fontSizeUnit) {
+      case "px@0.5x":
+        textCSS += "font-size:" + Math.round(fontSize / 2) + "px;<br>";
+        break;
+
+      case "px":
+        textCSS += "font-size:" + Math.round(fontSize) + "px;<br>";
+        break;
+
+      case "vw":
+        textCSS += "font-size:" + (fontSize * 100 / 750).toFixed(6) + "vw;<br>";
+        break;
+
+      default:
+        log("无法识别这个单位");
+        break;
     }
   }
 
   if (lineHeight) {
     log('lineHeightUnit:' + lineHeightUnit);
 
-    if (lineHeightUnit == "px") {
-      textCSS += "line-height:" + Math.round(lineHeight / 2) + "px;<br>";
-    } else if (lineHeightUnit == "vw") {
-      textCSS += "line-height:" + (lineHeight * 100 / 750).toFixed(6) + "vw;<br>";
+    switch (lineHeightUnit) {
+      case "px@0.5x":
+        textCSS += "line-height:" + Math.round(lineHeight / 2) + "px;<br>";
+        break;
+
+      case "px":
+        textCSS += "line-height:" + Math.round(lineHeight) + "px;<br>";
+        break;
+
+      case "vw":
+        textCSS += "line-height:" + (lineHeight * 100 / 750).toFixed(6) + "vw;<br>";
+        break;
+
+      default:
+        log("无法识别这个单位");
+        break;
     }
   }
 

@@ -41,13 +41,13 @@ const convertUnit = function(rect,settings){
         }
         switch(heightUnit){
           case "px@0.5x":
-            style +=  "height:" + (rect.width / 2) + "px;<br>";
+            style +=  "height:" + (rect.height / 2) + "px;<br>";
             break;
           case "px":
-            style +=  "height:" + rect.width  + "px;<br>";
+            style +=  "height:" + rect.height  + "px;<br>";
             break;
           case "vw":
-            style +=  "height:" + (rect.width * 100/750).toFixed(6) + "vw;<br>";
+            style +=  "height:" + (rect.height * 100/750).toFixed(6) + "vw;<br>";
             break;
           default:
             log("无法识别这个单位");

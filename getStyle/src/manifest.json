@@ -5,8 +5,8 @@
     {
       "name": "getStyle",
       "identifier": "getstyle.control",
-      "script": "my-command.js",
-      "handlers": {
+      "script": "./my-command.js",
+      "handlers" : {
         "actions": {
           "SelectionChanged.finish": "onSelectionChanged"
         }
@@ -15,7 +15,7 @@
     {
       "name": "settings",
       "identifier": "getstyle.settings",
-      "script": "settings.js"
+      "script": "./settings.js"
     }
   ],
   "menu": {
@@ -24,10 +24,5 @@
       "getstyle.control",
       "getstyle.settings"
     ]
-  },
-  "version": "0.1.0",
-  "name": "getStyle",
-  "identifier": "getStyle",
-  "disableCocoaScriptPreprocessor": true,
-  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml"
+  }
 }

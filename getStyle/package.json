@@ -1,0 +1,31 @@
+{
+  "name": "getStyle",
+  "version": "0.1.0",
+  "engines": {
+    "sketch": ">=3.0"
+  },
+  "skpm": {
+    "name": "getStyle",
+    "manifest": "src/manifest.json",
+    "main": "getstyle.sketchplugin",
+    "assets": [
+      "assets/**/*"
+    ]
+  },
+  "scripts": {
+    "build": "skpm-build",
+    "watch": "skpm-build --watch",
+    "start": "skpm-build --watch --run",
+    "postinstall": "npm run build && skpm-link"
+  },
+  "resources": [
+    "resources/**/*.js"
+  ],
+  "devDependencies": {
+    "@skpm/builder": "^0.5.2"
+  },
+  "dependencies": {
+    "jQuery": "^1.7.4",
+    "sketch-module-web-view": "^1.2.3"
+  }
+}

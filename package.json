@@ -14,7 +14,8 @@
   },
   "description": "To get the CSS of layers",
   "repository": {
-    "url": "https://github.com/lulu0729/getStyle.git"
+    "type": "git",
+    "url": "git+https://github.com/lulu0729/getStyle.git"
   },
   "scripts": {
     "build": "skpm-build",

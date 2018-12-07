@@ -12,6 +12,10 @@
       "assets/**/*"
     ]
   },
+  "description": "To get the CSS of layers",
+  "repository": {
+    "url": "https://github.com/lulu0729/getStyle/tree/dev/getstyle.sketchplugin"
+  },
   "scripts": {
     "build": "skpm-build",
     "watch": "skpm-build --watch",

@@ -19,13 +19,13 @@
     }
   ],
   "menu": {
-    "title": "getStyle2.0",
+    "title": "getStyle",
     "items": [
       "getstyle.control",
       "getstyle.settings"
     ]
   },
-  "version": "0.1.0",
+  "version": "2.0.1",
   "name": "getStyle",
   "identifier": "getStyle",
   "disableCocoaScriptPreprocessor": true,

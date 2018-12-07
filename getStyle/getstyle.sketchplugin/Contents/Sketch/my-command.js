@@ -1894,15 +1894,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sketch_module_web_view_remote__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sketch-module-web-view/remote */ "./node_modules/sketch-module-web-view/remote.js");
 /* harmony import */ var sketch_module_web_view_remote__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sketch_module_web_view_remote__WEBPACK_IMPORTED_MODULE_2__);
  //引入webview的model
+//import {UI} from 'sketch/ui';
 
 
+ ////////////////////////////////////////////////////////////////////////////////
+// Using JSTalk clipboard handling snippet from https://gist.github.com/uhunkler/5465857 by Urs Hunkler
+
+var clipboard = {
+  // store the pasetboard object
+  pasteBoard: null,
+  // save the pasteboard object
+  init: function init() {
+    this.pasteBoard = NSPasteboard.generalPasteboard();
+  },
+  // set the clipboard to the given text
+  set: function set(text) {
+    if (typeof text === 'undefined') return null;
+    if (!this.pasteBoard) this.init();
+    this.pasteBoard.declareTypes_owner([NSPasteboardTypeString], null);
+    this.pasteBoard.setString_forType(text, NSPasteboardTypeString);
+    return true;
+  },
+  // get text from the clipbaoard
+  get: function get() {
+    if (!this.pasteBoard) this.init();
+    var text = this.pasteBoard.stringForType(NSPasteboardTypeString);
+    return text.toString();
+  }
+}; ////////////////////////////////////////////////////////////////////////////////
 
 function onSelectionChanged(context) {
   var selection = context.actionContext.document.selectedLayers().layers();
   log('onSelectionChanged');
   var options = {
     identifier: 'unique.id',
-    width: 400,
+    width: 500,
     height: 600,
     show: false
   };
@@ -1912,7 +1938,9 @@ function onSelectionChanged(context) {
 
     var style = Object(_style__WEBPACK_IMPORTED_MODULE_1__["getStyle"])(selection);
     log('style:' + style);
-    Object(sketch_module_web_view_remote__WEBPACK_IMPORTED_MODULE_2__["sendToWebview"])("unique.id", "updatePreview('" + style + "')");
+    Object(sketch_module_web_view_remote__WEBPACK_IMPORTED_MODULE_2__["sendToWebview"])("unique.id", "updatePreview('" + style + "')"); //UI.message("已复制CSS样式到剪贴板~");
+
+    clipboard.set(style);
   } else {
     log('not isWebviewPresent');
     var win = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
@@ -1922,7 +1950,9 @@ function onSelectionChanged(context) {
       win.show();
       style = Object(_style__WEBPACK_IMPORTED_MODULE_1__["getStyle"])(selection);
       log('style:' + style);
-      win.webContents.executeJavaScript("updatePreview('" + style + "')");
+      win.webContents.executeJavaScript("updatePreview('" + style + "')"); //UI.message("已复制CSS样式到剪贴板~");
+
+      clipboard.set(style);
     });
   }
 }
@@ -1941,7 +1971,8 @@ function onSelectionChanged(context) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStyle", function() { return getStyle; });
 /* harmony import */ var _unit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./unit */ "./src/unit.js");
-
+ ////////////////////////////////////////////////////////////////////////////////
+//获取图层的宽高位置数据
 
 var getRect = function getRect(layer) {
   var rect = layer.absoluteRect();
@@ -1973,30 +2004,32 @@ var getRect = function getRect(layer) {
       this.maxY = this.y + this.height;
     }
   };
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+//转换图层的宽高单位
+
 
 var convertUnit = function convertUnit(rect, settings) {
   //log("width:"+rect.width * 100/750+ "vw;");
   //log("height:"+rect.height * 100/750+ "vw;");
   var widthUnit = settings.width,
       heightUnit = settings.height;
-  var style = "";
-
-  if (widthUnit == "px") {} else if (widthUnit == "vw") {
-    style += "width:" + (rect.width * 100 / 750).toFixed(6) + "vw;<br>";
-  }
+  var textCSS = "";
 
   switch (widthUnit) {
     case "px@0.5x":
-      style += "width:" + rect.width / 2 + "px;<br>";
+      textCSS += "width:" + rect.width / 2 + "px;<br>";
       break;
 
     case "px":
-      style += "width:" + rect.width + "px;<br>";
+      textCSS += "width:" + rect.width + "px;<br>";
       break;
 
     case "vw":
-      style += "width:" + (rect.width * 100 / 750).toFixed(6) + "vw;<br>";
+      textCSS += "width:" + (rect.width * 100 / 750).toFixed(6) + "vw;<br>";
+      break;
+
+    case "rpx":
+      textCSS += "width:" + rect.width + "rpx;<br>";
       break;
 
     default:
@@ -2006,15 +2039,19 @@ var convertUnit = function convertUnit(rect, settings) {
 
   switch (heightUnit) {
     case "px@0.5x":
-      style += "height:" + rect.height / 2 + "px;<br>";
+      textCSS += "height:" + rect.height / 2 + "px;<br>";
       break;
 
     case "px":
-      style += "height:" + rect.height + "px;<br>";
+      textCSS += "height:" + rect.height + "px;<br>";
       break;
 
     case "vw":
-      style += "height:" + (rect.height * 100 / 750).toFixed(6) + "vw;<br>";
+      textCSS += "height:" + (rect.height * 100 / 750).toFixed(6) + "vw;<br>";
+      break;
+
+    case "rpx":
+      textCSS += "height:" + rect.height + "rpx;<br>";
       break;
 
     default:
@@ -2022,19 +2059,46 @@ var convertUnit = function convertUnit(rect, settings) {
       break;
   }
 
-  log('react style:' + style);
-  return style;
-};
+  log('react style:' + textCSS);
+  return textCSS;
+}; ////////////////////////////////////////////////////////////////////////////////
+//转换图层的位置单位
 
-var convertPosition = function convertPosition(rect1, rect2) {
+
+var convertPosition = function convertPosition(rect1, rect2, settings) {
   var left = Math.round(rect1.x - rect2.x),
       top = Math.round(rect1.y - rect2.y),
       right = Math.round(rect1.maxX - rect2.maxX),
       bottom = Math.round(rect1.maxY - rect2.maxY);
-  var textCSS = "left:" + (left * 100 / 750).toFixed(6) + "vw;<br>" + "top:" + (top * 100 / 750).toFixed(6) + "vw;<br>" + "right:" + (right * 100 / 750).toFixed(6) + "vw;<br>" + "bottom:" + (bottom * 100 / 750).toFixed(6) + "vw;<br>"; //log(textCSS);
+  var textCSS = "";
+  var positionUnit = settings.position;
+
+  switch (positionUnit) {
+    case "px@0.5x":
+      textCSS += "left:" + left / 2 + "px;<br>" + "top:" + top / 2 + "px;<br>" + "right:" + right / 2 + "px;<br>" + "bottom:" + bottom / 2 + "px;<br>";
+      break;
+
+    case "px":
+      textCSS += "left:" + left + "px;<br>" + "top:" + top + "px;<br>" + "right:" + right + "px;<br>" + "bottom:" + bottom + "px;<br>";
+      break;
+
+    case "vw":
+      textCSS = "left:" + (left * 100 / 750).toFixed(6) + "vw;<br>" + "top:" + (top * 100 / 750).toFixed(6) + "vw;<br>" + "right:" + (right * 100 / 750).toFixed(6) + "vw;<br>" + "bottom:" + (bottom * 100 / 750).toFixed(6) + "vw;<br>";
+      break;
+
+    case "rpx":
+      textCSS += "left:" + left + "rpx;<br>" + "top:" + top + "rpx;<br>" + "right:" + right + "rpx;<br>" + "bottom:" + bottom + "rpx;<br>";
+      break;
+
+    default:
+      log("无法识别这个单位");
+      break;
+  }
 
   return textCSS;
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+//获取text类型图层的样式
+
 
 var getTextStyle = function getTextStyle(text, settings) {
   var textCSS = ''; //let attributes = text.attributedString().treeAsDictionary().value.attributes;
@@ -2067,6 +2131,10 @@ var getTextStyle = function getTextStyle(text, settings) {
         textCSS += "font-size:" + (fontSize * 100 / 750).toFixed(6) + "vw;<br>";
         break;
 
+      case "rpx":
+        textCSS += "font-size:" + Math.round(fontSize) + "rpx;<br>";
+        break;
+
       default:
         log("无法识别这个单位");
         break;
@@ -2089,21 +2157,48 @@ var getTextStyle = function getTextStyle(text, settings) {
         textCSS += "line-height:" + (lineHeight * 100 / 750).toFixed(6) + "vw;<br>";
         break;
 
+      case "rpx":
+        textCSS += "line-height:" + Math.round(lineHeight) + "rpx;<br>";
+        break;
+
       default:
         log("无法识别这个单位");
         break;
     }
   }
 
-  textCSS += "color:" + rgbaCode(textColor);
+  textCSS += "color:" + rgbaCode(textColor) + ";<br>";
   var shadow = topShadow(text.style());
+  var shadowUnit = settings.textShadow;
 
   if (shadow) {
-    textCSS += "text-shadow:" + rgbaCode(shadow.color()) + ' ' + shadow.offsetX() / 2 + "px " + shadow.offsetY() / 2 + "px " + shadow.blurRadius() / 2 + "px;<br>";
+    switch (shadowUnit) {
+      case "px@0.5x":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + Math.ceil(shadow.offsetX() / 2) + "px " + Math.ceil(shadow.offsetY() / 2) + "px " + Math.ceil(shadow.blurRadius() / 2) + "px;<br>";
+        break;
+
+      case "px":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + Math.ceil(shadow.offsetX()) + "px " + Math.ceil(shadow.offsetY()) + "px " + Math.ceil(shadow.blurRadius()) + "px;<br>";
+        break;
+
+      case "vw":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + (shadow.offsetX() * 100 / 750).toFixed(6) + "vw " + (shadow.offsetY() * 100 / 750).toFixed(6) + "vw " + (shadow.blurRadius() * 100 / 750).toFixed(6) + "vw;<br>";
+        break;
+
+      case "rpx":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + Math.ceil(shadow.offsetX()) + "rpx " + Math.ceil(shadow.offsetY()) + "rpx " + Math.ceil(shadow.blurRadius()) + "rpx;<br>";
+        break;
+
+      default:
+        log("无法识别这个单位");
+        break;
+    }
   }
 
   return textCSS;
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+//获取非文字图层的样式
+
 
 var getLayerStyle = function getLayerStyle(layer, settings) {
   var textCSS = '';
@@ -2133,15 +2228,62 @@ var getLayerStyle = function getLayerStyle(layer, settings) {
 
 
   var border = topBorder(layer.style());
+  var borderUnit = settings.border;
 
   if (border) {
-    textCSS += "border:" + Math.ceil(border.thickness() / 2) + "px " + " solid " + rgbaCode(border.color()) + ";<br>";
+    //log("borderColor:" + border.color());
+    //log("borderRgbaColor:" + rgbaCode(border.color()));
+    switch (borderUnit) {
+      case "px@0.5x":
+        textCSS += "border:" + Math.ceil(border.thickness() / 2) + "px " + " solid " + rgbaCode(border.color()) + ";<br>";
+        break;
+
+      case "px":
+        textCSS += "border:" + Math.ceil(border.thickness()) + "px " + " solid " + rgbaCode(border.color()) + ";<br>";
+        break;
+
+      case "vw":
+        textCSS += "border:" + (border.thickness() * 100 / 750).toFixed(6) + "px " + " solid " + rgbaCode(border.color()) + ";<br>";
+        break;
+
+      case "rpx":
+        textCSS += "border:" + Math.ceil(border.thickness()) + "rpx " + " solid " + rgbaCode(border.color()) + ";<br>";
+        break;
+
+      default:
+        log("无法识别这个单位");
+        break;
+    }
+  } else {
+    log("没有border样式");
+    log("border" + border);
   }
 
   var shadow = topShadow(layer.style());
+  var shadowUnit = settings.boxShadow;
 
   if (shadow) {
-    textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + Math.ceil(shadow.offsetX() / 2) + "px " + Math.ceil(shadow.offsetY() / 2) + "px " + Math.ceil(shadow.blurRadius() / 2) + "px;<br>";
+    switch (shadowUnit) {
+      case "px@0.5x":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + Math.ceil(shadow.offsetX() / 2) + "px " + Math.ceil(shadow.offsetY() / 2) + "px " + Math.ceil(shadow.blurRadius() / 2) + "px;<br>";
+        break;
+
+      case "px":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + Math.ceil(shadow.offsetX()) + "px " + Math.ceil(shadow.offsetY()) + "px " + Math.ceil(shadow.blurRadius()) + "px;<br>";
+        break;
+
+      case "vw":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + (shadow.offsetX() * 100 / 750).toFixed(6) + "vw " + (shadow.offsetY() * 100 / 750).toFixed(6) + "vw " + (shadow.blurRadius() * 100 / 750).toFixed(6) + "vw;<br>";
+        break;
+
+      case "rpx":
+        textCSS += "box-shadow:" + rgbaCode(shadow.color()) + ' ' + Math.ceil(shadow.offsetX()) + "rpx " + Math.ceil(shadow.offsetY()) + "rpx " + Math.ceil(shadow.blurRadius()) + "rpx;<br>";
+        break;
+
+      default:
+        log("无法识别这个单位");
+        break;
+    }
   }
 
   var opacity = layer.style().contextSettings().opacity();
@@ -2151,14 +2293,18 @@ var getLayerStyle = function getLayerStyle(layer, settings) {
   }
 
   return textCSS;
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+//颜色转为rgba形式
+
 
 var rgbaCode = function rgbaCode(colour) {
   var red = Math.round(colour.red() * 255);
   var green = Math.round(colour.green() * 255);
   var blue = Math.round(colour.blue() * 255);
   return 'rgba(' + red + ',' + green + ',' + blue + ',' + colour.alpha().toFixed(2) + ')';
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+//获取填充的颜色、渐变
+
 
 var topFill = function topFill(style) {
   var fills = style.enabledFills(),
@@ -2186,7 +2332,9 @@ var topFill = function topFill(style) {
   }
 
   return fill;
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+//获取border样式
+
 
 var topBorder = function topBorder(style) {
   var borders = style.enabledBorders();
@@ -2203,7 +2351,9 @@ var topBorder = function topBorder(style) {
   }
 
   return border;
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+//获取shadow样式
+
 
 var topShadow = function topShadow(style) {
   var shadows = style.enabledShadows();
@@ -2214,7 +2364,8 @@ var topShadow = function topShadow(style) {
   } else {
     return shadows[len - 1];
   }
-};
+}; ////////////////////////////////////////////////////////////////////////////////
+
 
 function getStyle(selection) {
   var style = ''; //let sketchObject = selection.sketchObject;
@@ -2227,21 +2378,22 @@ function getStyle(selection) {
     style = "Select 1 or 2 layers to get style!";
     return style;
   } else if (layerCount == 1) {
-    var settings = Object(_unit__WEBPACK_IMPORTED_MODULE_0__["getSettings"])();
+    var _settings = Object(_unit__WEBPACK_IMPORTED_MODULE_0__["getSettings"])();
+
     log("Select 1!");
-    log(settings);
+    log(_settings);
     var targetRect = getRect(selection[0]); //转换宽高单位
 
-    style = convertUnit(targetRect, settings);
+    style = convertUnit(targetRect, _settings);
     var layerClass = selection[0].class(); //判断是否为group
 
     if (layerClass == MSShapeGroup || layerClass == MSRectangleShape) {
       log('is group or rectangle');
-      style += getLayerStyle(selection[0], settings);
+      style += getLayerStyle(selection[0], _settings);
     } else if (layerClass == MSTextLayer) {
       //判断是否为text
       log('is text');
-      style += getTextStyle(selection[0], settings);
+      style += getTextStyle(selection[0], _settings);
     } else {
       log(layerClass);
     } //log(selection[0].CSSAttributes());
@@ -2249,11 +2401,13 @@ function getStyle(selection) {
 
     return style;
   } else if (layerCount == 2) {
-    /*var target = (selection.count() == 1)? selection[0]: selection[1],
-        layer = (selection.count() == 1)? this.current: selection[0];
-    var targetRect = this.getRect(target),
-        layerRect = this.getRect(layer);
-    style = this.convertPosition(targetRect,layerRect);*/
+    var target = selection.count() == 1 ? selection[0] : selection[1],
+        layer = selection.count() == 1 ? this.current : selection[0];
+
+    var _targetRect = getRect(target),
+        layerRect = getRect(layer);
+
+    style = convertPosition(_targetRect, layerRect, settings);
     log(style);
     return style;
   }

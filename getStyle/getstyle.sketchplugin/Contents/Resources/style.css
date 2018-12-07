@@ -24,10 +24,10 @@ html,body{
   font-size: 15px;
   line-height: 1.5;
   font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
-  padding: 10% 10% 0;
+  padding: 0 10%;
 }
 .text,.form{
   font-size: 12px;
-  padding: 0 10% 10px;
+  padding: 10px 10% 10px;
   font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
 }

@@ -25,9 +25,10 @@
       "getstyle.settings"
     ]
   },
-  "version": "2.0.1",
+  "version": "2.0.0",
+  "description": "To get the CSS of layers",
   "name": "getStyle",
   "identifier": "getStyle",
   "disableCocoaScriptPreprocessor": true,
-  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml"
+  "appcast": "https://raw.githubusercontent.com/lulu0729/getStyle/master/.appcast.xml"
 }

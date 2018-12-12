@@ -71,6 +71,7 @@ const convertPosition = function(rect1,rect2,settings){
         bottom = Math.round(rect1.maxY - rect2.maxY);
     let textCSS = "";
     let positionUnit = settings.position;
+    log("positionUnit:" +positionUnit);
         switch(positionUnit){
           case "px@0.5x":
             textCSS +=  "left:" + (left/2) + "px;<br>" + "top:" + (top/2)+ "px;<br>" + "right:" + (right/2)+ "px;<br>"+ "bottom:" + (bottom/2)+ "px;<br>";
@@ -350,11 +351,13 @@ export function getStyle(selection){
                     //log(selection[0].CSSAttributes());
             return style;
         }else if(layerCount == 2){
-
-           let target = (selection.count() == 1)? selection[0]: selection[1],
+            let settings = getSettings();
+            let target = (selection.count() == 1)? selection[0]: selection[1],
                 layer = (selection.count() == 1)? this.current: selection[0];
             let targetRect = getRect(target),
                 layerRect = getRect(layer);
+            log("Select 2!");
+            log(settings);
             style = convertPosition(targetRect,layerRect,settings);
             log(style);
             

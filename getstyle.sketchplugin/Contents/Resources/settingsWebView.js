@@ -134,7 +134,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sketch_module_web_view_client__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_module_web_view_client__WEBPACK_IMPORTED_MODULE_0__);
 
 var btnConfirm = document.getElementById("btnConfirm");
-var settingsArg = ['width', 'height', 'fontSize', 'lineHeight', 'border', 'boxShadow', 'textShadow'];
+var settingsArg = ['width', 'height', 'fontSize', 'lineHeight', 'border', 'boxShadow', 'textShadow', 'position'];
 var settings; //初始化显示的设置
 
 window.innerSettings = function (key, value) {

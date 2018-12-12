@@ -1,6 +1,6 @@
 import pluginCall from 'sketch-module-web-view/client';
 let btnConfirm = document.getElementById("btnConfirm");
-let settingsArg = ['width','height','fontSize','lineHeight','border','boxShadow','textShadow'];
+let settingsArg = ['width','height','fontSize','lineHeight','border','boxShadow','textShadow','position'];
 let settings;
 
 //初始化显示的设置

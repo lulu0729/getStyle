@@ -2076,6 +2076,7 @@ var convertPosition = function convertPosition(rect1, rect2, settings) {
       bottom = Math.round(rect1.maxY - rect2.maxY);
   var textCSS = "";
   var positionUnit = settings.position;
+  log("positionUnit:" + positionUnit);
 
   switch (positionUnit) {
     case "px@0.5x":
@@ -2382,22 +2383,21 @@ function getStyle(selection) {
     style = "Select 1 or 2 layers to get style!";
     return style;
   } else if (layerCount == 1) {
-    var _settings = Object(_unit__WEBPACK_IMPORTED_MODULE_0__["getSettings"])();
-
+    var settings = Object(_unit__WEBPACK_IMPORTED_MODULE_0__["getSettings"])();
     log("Select 1!");
-    log(_settings);
+    log(settings);
     var targetRect = getRect(selection[0]); //转换宽高单位
 
-    style = convertUnit(targetRect, _settings);
+    style = convertUnit(targetRect, settings);
     var layerClass = selection[0].class(); //判断是否为group
 
     if (layerClass == MSShapeGroup || layerClass == MSRectangleShape) {
       log('is group or rectangle');
-      style += getLayerStyle(selection[0], _settings);
+      style += getLayerStyle(selection[0], settings);
     } else if (layerClass == MSTextLayer) {
       //判断是否为text
       log('is text');
-      style += getTextStyle(selection[0], _settings);
+      style += getTextStyle(selection[0], settings);
     } else {
       log(layerClass);
     } //log(selection[0].CSSAttributes());
@@ -2405,13 +2405,17 @@ function getStyle(selection) {
 
     return style;
   } else if (layerCount == 2) {
+    var _settings = Object(_unit__WEBPACK_IMPORTED_MODULE_0__["getSettings"])();
+
     var target = selection.count() == 1 ? selection[0] : selection[1],
         layer = selection.count() == 1 ? this.current : selection[0];
 
     var _targetRect = getRect(target),
         layerRect = getRect(layer);
 
-    style = convertPosition(_targetRect, layerRect, settings);
+    log("Select 2!");
+    log(_settings);
+    style = convertPosition(_targetRect, layerRect, _settings);
     log(style);
     return style;
   }
@@ -2452,13 +2456,15 @@ function getSettings() {
     var value = settings[key],
         unit = Settings.settingForKey(key);
 
-    if (unit !== value) {
-      //判断是否已重新设置单位，如有则更新settings
-      settings[key] = unit;
-      log(key + ':' + unit);
-    } else {
-      //未重新设置，则保持默认的
-      log(key + "未重新设置");
+    if (unit) {
+      if (unit !== value) {
+        //判断是否已重新设置单位，如有则更新settings
+        settings[key] = unit;
+        log(key + ':' + unit);
+      } else {
+        //未重新设置，则保持默认的
+        log(key + "未重新设置");
+      }
     }
   });
   return settings;

@@ -1938,21 +1938,25 @@ function onSelectionChanged(context) {
 
     var style = Object(_style__WEBPACK_IMPORTED_MODULE_1__["getStyle"])(selection);
     log('style:' + style);
+    var replaceCSS = style.replace(/<br>/g, "\r");
+    log('replaceCSS:' + replaceCSS);
     Object(sketch_module_web_view_remote__WEBPACK_IMPORTED_MODULE_2__["sendToWebview"])("unique.id", "updatePreview('" + style + "')"); //UI.message("已复制CSS样式到剪贴板~");
 
-    clipboard.set(style);
+    clipboard.set(replaceCSS);
   } else {
     log('not isWebviewPresent');
     var win = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
     win.loadURL('../Resources/panel.html');
     win.once('ready-to-show', function () {
-      var style;
+      var style = "";
       win.show();
       style = Object(_style__WEBPACK_IMPORTED_MODULE_1__["getStyle"])(selection);
       log('style:' + style);
       win.webContents.executeJavaScript("updatePreview('" + style + "')"); //UI.message("已复制CSS样式到剪贴板~");
 
-      clipboard.set(style);
+      var replaceCSS = style.replace(/<br>/g, "\r");
+      log('replaceCSS:' + replaceCSS);
+      clipboard.set(replaceCSS);
     });
   }
 }

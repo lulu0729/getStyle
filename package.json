@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "jQuery": "^1.7.4",
+    "npm": "^6.5.0",
     "sketch-module-web-view": "^1.2.3"
   }
 }

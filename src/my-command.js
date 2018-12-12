@@ -58,16 +58,18 @@ export function onSelectionChanged(context) {
 
 		let style = getStyle(selection);
 		log('style:' + style);
+		let replaceCSS = style.replace(/<br>/g, "\r");
+  		log('replaceCSS:' + replaceCSS);
 		sendToWebview("unique.id","updatePreview('" + style + "')");
 		//UI.message("已复制CSS样式到剪贴板~");
-    	clipboard.set(style);
+    	clipboard.set(replaceCSS);
 		
 	}else{
 		log('not isWebviewPresent');
 		const win = new BrowserWindow(options);
 		win.loadURL('../Resources/panel.html');
 		win.once('ready-to-show', () => {
-	  		let style;
+	  		let style = "";
 	  		
 	  		win.show();
 
@@ -77,7 +79,9 @@ export function onSelectionChanged(context) {
 	  				"updatePreview('" + style + "')"
 			);
 			//UI.message("已复制CSS样式到剪贴板~");
-    		clipboard.set(style);
+			let replaceCSS = style.replace(/<br>/g, "\r");
+  			log('replaceCSS:' + replaceCSS);
+    		clipboard.set(replaceCSS);
 		  	
 		});
 	}

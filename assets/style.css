@@ -11,6 +11,37 @@ html,body{
   flex-direction: column;
   justify-content: center;
 }
+select{   
+  position: relative;
+  height:  20px;
+  line-height: 20px;
+  border: 1px solid #de3dac6b;  
+  color: #DE3DAC;
+  appearance: none;/*清除select下拉框默认样式*/    
+  -moz-appearance: none;    
+  -webkit-appearance: none;   
+  padding: 0 14px;/*为下拉小箭头留出一点位置，避免被文字覆盖*/ 
+  background-color: transparent; 
+  margin-bottom: 10px;
+  border-radius: 0;  
+}
+select::-ms-expand {    
+  display: none;/*清除IE默认下拉按钮，但是测试发现IE10以上有效，IE8，9默认下拉按钮仍旧存在*/
+}
+select:after{
+  display: block;
+  content: ">";
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  color: #DE3DAC;
+  transform: translate(0,-50%) rotate(90deg);
+}
+.attr-name{
+  display: inline-block;
+  margin-bottom: 10px;
+  width: 90px;
+}
 .value{
   width:80%;
   height:80%;
@@ -24,10 +55,20 @@ html,body{
   font-size: 15px;
   line-height: 1.5;
   font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
-  padding: 0 10%;
+  padding: 20px 10% 0;
+  margin: 0;
 }
 .text,.form{
   font-size: 12px;
   padding: 10px 10% 10px;
   font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+}
+.btn{
+  margin-top: 20px;
+  min-width: 80px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid #DE3DAC;
+  color: #DE3DAC;
+  border-radius: 20px;
 }

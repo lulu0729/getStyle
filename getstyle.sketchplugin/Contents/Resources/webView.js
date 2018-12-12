@@ -134,17 +134,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sketch_module_web_view_client__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_module_web_view_client__WEBPACK_IMPORTED_MODULE_0__);
 
 
-var copyStyle = function copyStyle(style) {
-  var input = document.getElementById('copyInput');
-  input.setAttribute('value', style);
-  input.select();
-
-  if (document.execCommand('copy')) {
-    document.execCommand('copy');
-    console.log('复制样式成功');
-  }
-};
-
 window.updatePreview = function (style) {
   sketch_module_web_view_client__WEBPACK_IMPORTED_MODULE_0___default()('nativeLog', 'Called from the webview');
   document.querySelector("#textCSS").innerHTML = style; //copyStyle(style);

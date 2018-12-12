@@ -1886,6 +1886,7 @@ __webpack_require__.r(__webpack_exports__);
     log('set key:' + key);
     log('set value:' + value);
     Settings.setSettingForKey(key, value);
+    win.close();
   }); //log('sendMessage');
 
   win.loadURL('../Resources/settings-panel.html');

@@ -1,5 +1,5 @@
-# getStyle
-To get the CSS of the layers conveniently。
+# Sketch Plugin -- getStyle
+To get the CSS of the layers conveniently in sketch。
 能方便地获取图层的CSS样式代码。
 
 ## How to use 如何使用

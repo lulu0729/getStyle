@@ -1,6 +1,6 @@
 # Sketch Plugin -- getStyle
 To get the CSS of the layers conveniently in sketch。
-能方便地获取图层的CSS样式代码。
+能方便地获取图层的CSS样式代码的sketch插件。
 
 ## How to use 如何使用
 Click plugin to install getStyle.
